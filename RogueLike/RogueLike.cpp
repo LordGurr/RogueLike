@@ -8,6 +8,14 @@
 #include <iostream>
 #include <windows.h>
 #include <string>
+#include <thread>
+#include <iostream>
+#include <Windows.h>
+#include <iostream>
+#include <thread>
+#include <vector>
+
+using namespace std;
 
 std::string player = "X";
 
@@ -52,19 +60,66 @@ void DrawBox(int x, int y, int width, int height)
 
 int main()
 {
+	srand(time(NULL));
+
 	std::cout << "Hello World!\n";
 	gotoxy(5, 5);
 	std::cout << "Hello World!\n";
 
-	DrawBox(2, 7, 10, 5);
+	int roomX = 2;
+	int roomY = 7;
+	int roomWidth = rand() % 50 + 20;
+	int roomHeigth = rand() % 10 + 10;
+
+	int x = rand() % (roomWidth - 2) + roomX + 1;
+	int y = rand() % (roomHeigth - 2) + roomY + 1;
+
+	int a = rand();
+	int b = rand();
+	int c = rand();
+
+	DrawBox(roomX, roomY, roomWidth, roomHeigth);
 	bool bKey[4];
+	gotoxy(x, y);
+	std::cout << "X";
 	while (true)
 	{
-		getchar();
+		std::this_thread::sleep_for(50ms);
+		int oldX = x;
+		int oldY = y;
+		//getchar();
 		for (int k = 0; k < 4; k++)
 		{
-			// R   L   D Z
-			bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x27\x25\x28Z"[k]))) != 0;
+			//  L   U   R   D
+			bKey[k] = (0x8000 & GetAsyncKeyState((unsigned char)("\x25\x26\x27\x28"[k]))) != 0;
+		}
+		gotoxy(0, 0);
+		std::cout << "                            ";
+		gotoxy(0, 0);
+		short temp = GetAsyncKeyState((unsigned char)("\x25"[0]));
+		std::cout << temp;
+		if (bKey[0] && x - 1 > roomX)
+		{
+			x--;
+		}
+		if (bKey[1] && y - 1 > roomY)
+		{
+			y--;
+		}
+		if (bKey[2] && x + 2 < roomX + roomWidth)
+		{
+			x++;
+		}
+		if (bKey[3] && y + 2 < roomY + roomHeigth)
+		{
+			y++;
+		}
+		if (x != oldX || y != oldY)
+		{
+			gotoxy(oldX, oldY);
+			std::cout << " ";
+			gotoxy(x, y);
+			std::cout << "X";
 		}
 	}
 }
